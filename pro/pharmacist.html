@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital CMS - Pharmacist Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Hospital CMS - Pharmacist</a>
+            <span class="navbar-text me-3" id="pharmacistName"></span>
+            <button class="btn btn-outline-light ms-auto" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="pharmacistTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="medicines-tab" data-bs-toggle="tab" data-bs-target="#medicines" type="button" role="tab">Medicine Management</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Search Prescriptions</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pharmacistTabContent">
+            <!-- Medicine Management Tab -->
+            <div class="tab-pane fade show active" id="medicines" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Medicine Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="medicineForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Medicine Name</label>
+                                    <input type="text" class="form-control" id="medicineName" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="medicineQuantity" min="1" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="date" class="form-control" id="medicineExpiry" required>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-success">Add Medicine</button>
+                                <button type="reset" class="btn btn-secondary ms-2">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>Medicine List</h6>
+                    <div id="medicineList">
+                        <!-- Medicine list will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Prescriptions Tab -->
+            <div class="tab-pane fade" id="prescriptions" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Search Prescriptions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Search by Patient ID</label>
+                                <input type="text" class="form-control" id="searchPatientId" placeholder="Enter Patient ID">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Search by Patient Name</label>
+                                <input type="text" class="form-control" id="searchPatientName" placeholder="Enter Patient Name">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="searchPrescriptions()">Search</button>
+                        <button class="btn btn-secondary ms-2" onclick="clearPrescriptionSearch()">Clear</button>
+                        
+                        <div class="mt-4">
+                            <h6>Search Results</h6>
+                            <div id="prescriptionResults"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medicine Details Modal -->
+    <div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="medicineModalLabel">Medicine Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMedicineForm">
+                        <div class="mb-3">
+                            <label class="form-label">Medicine Name</label>
+                            <input type="text" class="form-control" id="editMedicineName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="editMedicineQuantity" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="editMedicineExpiry" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateMedicine()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/unified-auth.js"></script>
+    <script src="js/pharmacist.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

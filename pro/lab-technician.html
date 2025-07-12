@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital CMS - Lab Technician Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Hospital CMS - Lab Technician</a>
+            <span class="navbar-text me-3" id="labTechnicianName"></span>
+            <button class="btn btn-outline-light ms-auto" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="labTechnicianTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button" role="tab">Lab Tests</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Search Prescriptions</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reports-tab" data-bs-toggle="tab" data-bs-target="#reports" type="button" role="tab">Create Test Report</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="labTechnicianTabContent">
+            <!-- Lab Tests Tab -->
+            <div class="tab-pane fade show active" id="tests" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Lab Tests List</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="labTestsList">
+                            <!-- Lab tests will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Prescriptions Tab -->
+            <div class="tab-pane fade" id="prescriptions" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Search Prescriptions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Search by Patient ID</label>
+                                <input type="text" class="form-control" id="searchLabPatientId" placeholder="Enter Patient ID">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Search by Patient Name</label>
+                                <input type="text" class="form-control" id="searchLabPatientName" placeholder="Enter Patient Name">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="searchLabPrescriptions()">Search</button>
+                        <button class="btn btn-secondary ms-2" onclick="clearLabPrescriptionSearch()">Clear</button>
+                        
+                        <div class="mt-4">
+                            <h6>Search Results</h6>
+                            <div id="labPrescriptionResults"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Test Report Tab -->
+            <div class="tab-pane fade" id="reports" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Create Test Report</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="testReportForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Patient ID</label>
+                                    <input type="text" class="form-control" id="reportPatientId" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Patient Name</label>
+                                    <input type="text" class="form-control" id="reportPatientName" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Doctor Name</label>
+                                    <input type="text" class="form-control" id="reportDoctorName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Test Date</label>
+                                    <input type="date" class="form-control" id="reportTestDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Test Name</label>
+                                    <input type="text" class="form-control" id="reportTestName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">High Range</label>
+                                    <input type="number" step="0.01" class="form-control" id="reportHighRange" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Low Range</label>
+                                    <input type="number" step="0.01" class="form-control" id="reportLowRange" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Actual Reading</label>
+                                    <input type="number" step="0.01" class="form-control" id="reportActualReading" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Observations</label>
+                                    <textarea class="form-control" id="reportObservations" rows="4" required></textarea>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-success">Save Test Report</button>
+                                <button type="reset" class="btn btn-secondary ms-2">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Report Success Modal -->
+    <div class="modal fade" id="testReportModal" tabindex="-1" aria-labelledby="testReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testReportModalLabel">Test Report Saved</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Test report has been saved successfully to patient file.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/unified-auth.js"></script>
+    <script src="js/lab-technician.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

@@ -1,0 +1,124 @@
+// Create default admin account if not exists
+function createDefaultAdmin() {
+    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
+    const adminExists = staffList.find(s => s.role === 'admin');
+    
+    if (!adminExists) {
+        const defaultAdmin = {
+            name: 'Administrator',
+            dob: '1990-01-01',
+            gender: 'Other',
+            phone: '1234567890',
+            address: 'Hospital Admin',
+            email: 'admin@hospital.com',
+            role: 'admin',
+            specialization: '',
+            fee: '',
+            days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            startTime: '09:00',
+            endTime: '17:00',
+            password: 'Admin@123',
+            createdAt: new Date().toISOString()
+        };
+        staffList.push(defaultAdmin);
+        localStorage.setItem('staffList', JSON.stringify(staffList));
+    }
+}
+
+// Unified authentication for all staff members
+document.addEventListener('DOMContentLoaded', function() {
+    // Create default admin on first load
+    createDefaultAdmin();
+    
+    if (document.getElementById('unifiedLoginForm')) {
+        document.getElementById('unifiedLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Get staff list and check credentials
+            const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
+            const staff = staffList.find(s => 
+                s.email === email && 
+                s.password === password
+            );
+            
+            if (staff) {
+                // Store user session
+                localStorage.setItem('currentUser', JSON.stringify(staff));
+                localStorage.setItem('userLoggedIn', 'true');
+                
+                // Redirect based on role
+                switch (staff.role) {
+                    case 'admin':
+                        window.location.href = 'admin.html';
+                        break;
+                    case 'receptionist':
+                        window.location.href = 'receptionist.html';
+                        break;
+                    case 'doctor':
+                        window.location.href = 'doctor.html';
+                        break;
+                    case 'pharmacist':
+                        window.location.href = 'pharmacist.html';
+                        break;
+                    case 'lab technician':
+                        window.location.href = 'lab-technician.html';
+                        break;
+                    default:
+                        alert('Role not supported yet. Please contact administrator.');
+                        break;
+                }
+            } else {
+                document.getElementById('loginError').classList.remove('d-none');
+            }
+        });
+    }
+});
+
+// Check if user is logged in on protected pages
+function checkUserAuth() {
+    console.log('Checking user authentication...');
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    console.log('userLoggedIn:', userLoggedIn);
+    console.log('currentUser:', currentUser);
+    
+    if (!userLoggedIn || !currentUser) {
+        console.log('Authentication failed, redirecting to login');
+        window.location.href = 'unified-login.html';
+        return false;
+    }
+    
+    console.log('Authentication successful');
+    return currentUser;
+}
+
+// Check if user has required role
+function checkUserRole(requiredRole) {
+    console.log('Checking role:', requiredRole);
+    const currentUser = checkUserAuth();
+    if (!currentUser) {
+        console.log('No current user found');
+        return false;
+    }
+    
+    console.log('Current user role:', currentUser.role);
+    if (currentUser.role !== requiredRole) {
+        console.log('Role mismatch. Required:', requiredRole, 'Current:', currentUser.role);
+        alert('Access denied. You do not have permission to access this module.');
+        window.location.href = 'unified-login.html';
+        return false;
+    }
+    
+    console.log('Role check passed');
+    return currentUser;
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('userLoggedIn');
+    localStorage.removeItem('currentUser');
+    window.location.href = 'unified-login.html';
+} 

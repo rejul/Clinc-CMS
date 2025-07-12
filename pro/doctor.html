@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital CMS - Doctor Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Hospital CMS - Doctor</a>
+            <span class="navbar-text me-3" id="doctorName"></span>
+            <button class="btn btn-outline-light ms-auto" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="doctorTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">Daily Appointments</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="consultation-tab" data-bs-toggle="tab" data-bs-target="#consultation" type="button" role="tab">Consultation</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="doctorTabContent">
+            <!-- Daily Appointments Tab -->
+            <div class="tab-pane fade show active" id="appointments" role="tabpanel">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Today's Appointments</h5>
+                        <button class="btn btn-primary btn-sm" onclick="refreshAppointments()">Refresh</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="appointmentsList">
+                            <!-- Appointments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultation Tab -->
+            <div class="tab-pane fade" id="consultation" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Patient Consultation</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="consultationForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Patient ID</label>
+                                    <input type="text" class="form-control" id="consultationPatientId" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Patient Name</label>
+                                    <input type="text" class="form-control" id="consultationPatientName" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="consultationPatientAge" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Gender</label>
+                                    <input type="text" class="form-control" id="consultationPatientGender" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" id="consultationPatientPhone" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>Patient History (Non-editable)</h6>
+                                <div id="patientHistory" class="border p-3 bg-light">
+                                    <!-- Patient history will be displayed here -->
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>Today's Consultation Details</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Symptoms</label>
+                                        <textarea class="form-control" id="symptoms" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Diagnosis</label>
+                                        <textarea class="form-control" id="diagnosis" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Notes</label>
+                                        <textarea class="form-control" id="notes" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Prescription</label>
+                                        <textarea class="form-control" id="prescription" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Medicines</label>
+                                        <textarea class="form-control" id="medicines" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Lab Tests</label>
+                                        <textarea class="form-control" id="labTests" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-success">Save Consultation</button>
+                                <button type="reset" class="btn btn-secondary ms-2">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Success Modal -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="consultationModalLabel">Consultation Saved</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Consultation details have been saved successfully to patient history.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/unified-auth.js"></script>
+    <script src="js/doctor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
