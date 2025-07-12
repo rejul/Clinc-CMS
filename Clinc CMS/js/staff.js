@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', function() {
             errorDiv.remove();
         }
     });
+    document.getElementById('phone').addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+    document.getElementById('dob').addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
     document.getElementById('staffForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const staffList = getStaffList();
@@ -91,6 +97,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         const startTime = document.getElementById('startTime').value;
         const endTime = document.getElementById('endTime').value;
+        
+        // Phone number validation
+        const phoneField = document.getElementById('phone');
+        if (!/^\d{10}$/.test(phone)) {
+            phoneField.classList.add('is-invalid');
+            phoneField.focus();
+            return;
+        } else {
+            phoneField.classList.remove('is-invalid');
+        }
+
+        // Age validation
+        const dobField = document.getElementById('dob');
+        const today = new Date();
+        const birthDate = new Date(dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age <= 20) {
+            dobField.classList.add('is-invalid');
+            dobField.focus();
+            return;
+        } else {
+            dobField.classList.remove('is-invalid');
+        }
         
         // Check for duplicate email
         const existingStaff = staffList.find(staff => staff.email.toLowerCase() === email.toLowerCase());
