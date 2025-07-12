@@ -46,6 +46,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (staff) {
                 // Store user session
                 localStorage.setItem('currentUser', JSON.stringify(staff));
+                
+                if (staff.password === "Welcome@123") {
+                    staff.mustChangePassword = true;
+                    localStorage.setItem('currentUser', JSON.stringify(staff));
+                } else {
+                    staff.mustChangePassword = false;
+                    localStorage.setItem('currentUser', JSON.stringify(staff));
+                }
                 localStorage.setItem('userLoggedIn', 'true');
                 
                 // Redirect based on role
@@ -73,6 +81,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('loginError').classList.remove('d-none');
             }
         });
+    }
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.mustChangePassword) {
+        // Switch to Change Password tab (adjust selector for each module)
+        const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
+        tab.show();
+        showPasswordMessage('You must change your password before using the system.', 'warning');
     }
 });
 

@@ -66,6 +66,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Handle password change form submission
+    if (document.getElementById('passwordChangeForm')) {
+        document.getElementById('passwordChangeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePasswordChange();
+        });
+    }
+
+    // Force password change if mustChangePassword is true
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user && user.mustChangePassword) {
+        const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
+        tab.show();
+        showPasswordMessage('You must change your password before using the system.', 'warning');
+    }
 });
 
 // Load and display lab tests list
@@ -305,4 +321,73 @@ function displayLabPrescriptionResults(consultations) {
     });
     
     resultsDiv.innerHTML = html;
+} 
+
+function handlePasswordChange() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Get current logged-in user
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+        showPasswordMessage('Session expired. Please login again.', 'danger');
+        return;
+    }
+
+    // Get staff list and find the user
+    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
+    const userIndex = staffList.findIndex(staff =>
+        staff.role === user.role &&
+        staff.email === user.email
+    );
+
+    if (userIndex === -1) {
+        showPasswordMessage('User profile not found. Please contact admin.', 'danger');
+        return;
+    }
+
+    // Check if current password matches
+    if (currentPassword !== staffList[userIndex].password) {
+        showPasswordMessage('Current password is incorrect.', 'danger');
+        return;
+    }
+
+    // Check if new passwords match
+    if (newPassword !== confirmPassword) {
+        showPasswordMessage('New passwords do not match.', 'danger');
+        return;
+    }
+
+    // Check password strength (minimum 8 characters)
+    if (newPassword.length < 8) {
+        showPasswordMessage('New password must be at least 8 characters long.', 'danger');
+        return;
+    }
+
+    // Update password in staff list
+    staffList[userIndex].password = newPassword;
+    staffList[userIndex].mustChangePassword = false;
+    localStorage.setItem('staffList', JSON.stringify(staffList));
+
+    // Update current session
+    user.password = newPassword;
+    user.mustChangePassword = false;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+
+    showPasswordMessage('Password changed successfully!', 'success');
+    document.getElementById('passwordChangeForm').reset();
+
+    // Optionally reload after a short delay
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
+
+function showPasswordMessage(message, type) {
+    // Show modal popup instead of inline alert
+    const modalBody = document.getElementById('passwordChangeModalBody');
+    modalBody.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+    const modal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
+    modal.show();
 } 

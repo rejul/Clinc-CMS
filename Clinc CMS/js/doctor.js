@@ -202,6 +202,48 @@ function refreshAppointments() {
     loadTodayAppointments();
 }
 
+function loadLabResults() {
+    const labTests = JSON.parse(localStorage.getItem('labTests') || '[]');
+    const patients = getPatients();
+    // Show only lab tests for this doctor
+    const doctorName = currentUser.name;
+    const doctorLabTests = labTests.filter(test => test.doctorName === doctorName);
+
+    const labResultsDiv = document.getElementById('labResultsList');
+    if (!labResultsDiv) return;
+
+    if (doctorLabTests.length === 0) {
+        labResultsDiv.innerHTML = '<div class="alert alert-info">No lab results found for your patients.</div>';
+        return;
+    }
+
+    let html = '<div class="table-responsive"><table class="table table-striped">';
+    html += '<thead><tr><th>Patient ID</th><th>Patient Name</th><th>Test Name</th><th>Date</th><th>Actual</th><th>Low</th><th>High</th><th>Status</th><th>Observations</th></tr></thead><tbody>';
+
+    doctorLabTests.forEach(test => {
+        let statusClass = 'success', statusText = 'Normal';
+        if (test.actualReading > test.highRange) {
+            statusClass = 'danger'; statusText = 'High';
+        } else if (test.actualReading < test.lowRange) {
+            statusClass = 'warning'; statusText = 'Low';
+        }
+        html += `<tr>
+            <td>${test.patientId}</td>
+            <td>${test.patientName}</td>
+            <td>${test.testName}</td>
+            <td>${test.testDate}</td>
+            <td>${test.actualReading}</td>
+            <td>${test.lowRange}</td>
+            <td>${test.highRange}</td>
+            <td><span class="badge bg-${statusClass}">${statusText}</span></td>
+            <td>${test.observations}</td>
+        </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    labResultsDiv.innerHTML = html;
+}
+
 // Initialize doctor dashboard
 document.addEventListener('DOMContentLoaded', function() {
     // Load today's appointments
@@ -234,4 +276,94 @@ document.addEventListener('DOMContentLoaded', function() {
             saveConsultation(formData);
         });
     }
-}); 
+
+    // Handle password change form submission
+    if (document.getElementById('passwordChangeForm')) {
+        document.getElementById('passwordChangeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePasswordChange();
+        });
+    }
+
+    // Force password change if mustChangePassword is true
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.mustChangePassword) {
+        const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
+        tab.show();
+        showPasswordMessage('You must change your password before using the system.', 'warning');
+    }
+
+    if (document.getElementById('labresults-tab')) {
+        document.getElementById('labresults-tab').addEventListener('shown.bs.tab', function () {
+            loadLabResults();
+        });
+    }
+});
+
+function handlePasswordChange() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Get current logged-in user
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        showPasswordMessage('Session expired. Please login again.', 'danger');
+        return;
+    }
+
+    // Get staff list and find the user
+    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
+    const userIndex = staffList.findIndex(staff =>
+        staff.role === currentUser.role &&
+        staff.email === currentUser.email
+    );
+
+    if (userIndex === -1) {
+        showPasswordMessage('User profile not found. Please contact admin.', 'danger');
+        return;
+    }
+
+    // Check if current password matches
+    if (currentPassword !== staffList[userIndex].password) {
+        showPasswordMessage('Current password is incorrect.', 'danger');
+        return;
+    }
+
+    // Check if new passwords match
+    if (newPassword !== confirmPassword) {
+        showPasswordMessage('New passwords do not match.', 'danger');
+        return;
+    }
+
+    // Check password strength (minimum 8 characters)
+    if (newPassword.length < 8) {
+        showPasswordMessage('New password must be at least 8 characters long.', 'danger');
+        return;
+    }
+
+    // Update password in staff list
+    staffList[userIndex].password = newPassword;
+    staffList[userIndex].mustChangePassword = false;
+    localStorage.setItem('staffList', JSON.stringify(staffList));
+
+    // Update current session
+    currentUser.password = newPassword;
+    currentUser.mustChangePassword = false;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    showPasswordMessage('Password changed successfully!', 'success');
+    document.getElementById('passwordChangeForm').reset();
+
+    // Optionally reload after a short delay
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
+
+function showPasswordMessage(message, type) {
+    const messageDiv = document.getElementById('passwordMessage');
+    messageDiv.textContent = message;
+    messageDiv.className = `alert alert-${type} mt-3`;
+    messageDiv.classList.remove('d-none');
+} 

@@ -123,16 +123,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Check if must change password
+    // Force password change if mustChangePassword is true
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser && currentUser.mustChangePassword) {
-        // Switch to Change Password tab
         const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
         tab.show();
-
-        // Show modal or alert
         showPasswordMessage('You must change your password before using the system.', 'warning');
     }
+
+    // Remove any lingering modal-backdrop
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
 });
 
 // Patient search functionality
@@ -287,7 +287,7 @@ function handlePasswordChange() {
     }
     
     // Get staff list and find the user
-    const staffList = getStaffList();
+    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
     const userIndex = staffList.findIndex(staff => 
         staff.role === currentUser.role && 
         staff.email === currentUser.email
@@ -318,24 +318,28 @@ function handlePasswordChange() {
     
     // Update password in staff list
     staffList[userIndex].password = newPassword;
-    saveStaffList(staffList);
-    
-    // Update mustChangePassword flag
     staffList[userIndex].mustChangePassword = false;
-    saveStaffList(staffList);
+    localStorage.setItem('staffList', JSON.stringify(staffList));
+
+    // Update current session
+    currentUser.password = newPassword;
     currentUser.mustChangePassword = false;
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     
     showPasswordMessage('Password changed successfully!', 'success');
     document.getElementById('passwordChangeForm').reset();
+
+    // Optionally reload after a short delay
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
 }
 
 function showPasswordMessage(message, type) {
-    // Show modal popup instead of inline alert
-    const modalBody = document.getElementById('passwordChangeModalBody');
-    modalBody.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-    const modal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
-    modal.show();
+    const messageDiv = document.getElementById('passwordMessage');
+    messageDiv.textContent = message;
+    messageDiv.className = `alert alert-${type} mt-3`;
+    messageDiv.classList.remove('d-none');
 }
 
 // Report generation
