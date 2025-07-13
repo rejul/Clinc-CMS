@@ -61,6 +61,74 @@ function handleRoleChange() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin module loaded');
     
+    // Add dummy staff if staffList is empty
+    let staffList = getStaffList();
+    if (staffList.length === 1) {
+        staffList = [
+            {
+                name: 'Dr. John Doe',
+                dob: '1980-05-15',
+                gender: 'Male',
+                phone: '9000000001',
+                address: '123 Main St',
+                email: 'doctor1@clinic.com',
+                role: 'doctor',
+                specialization: 'Cardiology',
+                fee: '500',
+                days: ['Monday', 'Wednesday', 'Friday'],
+                startTime: '09:00',
+                endTime: '17:00',
+                password: generateDefaultPassword()
+            },
+            {
+                name: 'Pharma Jane',
+                dob: '1985-08-20',
+                gender: 'Female',
+                phone: '9000000002',
+                address: '456 Elm St',
+                email: 'pharma1@clinic.com',
+                role: 'pharmacist',
+                specialization: '',
+                fee: '',
+                days: ['Monday', 'Tuesday', 'Thursday'],
+                startTime: '10:00',
+                endTime: '18:00',
+                password: generateDefaultPassword()
+            },
+            {
+                name: 'Lab Sam',
+                dob: '1990-03-10',
+                gender: 'Other',
+                phone: '9000000003',
+                address: '789 Oak St',
+                email: 'lab1@clinic.com',
+                role: 'lab technician',
+                specialization: '',
+                fee: '',
+                days: ['Tuesday', 'Thursday'],
+                startTime: '08:00',
+                endTime: '16:00',
+                password: generateDefaultPassword()
+            },
+            {
+                name: 'Reception Max',
+                dob: '1992-12-01',
+                gender: 'Male',
+                phone: '9000000004',
+                address: '321 Pine St',
+                email: 'recept1@clinic.com',
+                role: 'receptionist',
+                specialization: '',
+                fee: '',
+                days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                startTime: '08:30',
+                endTime: '17:30',
+                password: generateDefaultPassword()
+            }
+        ];
+        saveStaffList(staffList);
+    }
+    
     console.log('Admin role verified, initializing...');
     populateStaffTable();
     document.getElementById('role').addEventListener('change', handleRoleChange);
@@ -143,6 +211,25 @@ document.addEventListener('DOMContentLoaded', function() {
             
             emailField.focus();
             return;
+        }
+        
+        // Check for duplicate phone number
+        const existingPhone = staffList.find(staff => staff.phone === phone);
+        if (existingPhone) {
+            const phoneField = document.getElementById('phone');
+            phoneField.classList.add('is-invalid');
+            let phoneErrorDiv = document.getElementById('phoneError');
+            if (phoneErrorDiv) {
+                phoneErrorDiv.textContent = 'Staff already exists with this phone number!';
+            }
+            phoneField.focus();
+            return;
+        } else {
+            // Reset phone error message if not duplicate
+            let phoneErrorDiv = document.getElementById('phoneError');
+            if (phoneErrorDiv) {
+                phoneErrorDiv.textContent = 'Phone number must be exactly 10 digits and contain only numbers (no spaces or symbols).';
+            }
         }
         
         // Remove any existing error styling
