@@ -217,10 +217,14 @@ function loadLabResults() {
         return;
     }
 
-    let html = '<div class="table-responsive"><table class="table table-striped">';
-    html += '<thead><tr><th>Patient ID</th><th>Patient Name</th><th>Test Name</th><th>Date</th><th>Actual</th><th>Low</th><th>High</th><th>Status</th><th>Observations</th></tr></thead><tbody>';
+    let html = '<div class="d-flex justify-content-between align-items-center mb-3">';
+    html += '<h6>Lab Results for Your Patients</h6>';
+    html += '<button class="btn btn-primary btn-sm" onclick="loadLabResults()">Refresh</button>';
+    html += '</div>';
+    html += '<div class="table-responsive"><table class="table table-striped">';
+    html += '<thead><tr><th>Patient ID</th><th>Patient Name</th><th>Test Name</th><th>Date</th><th>Actual</th><th>Low</th><th>High</th><th>Status</th><th>Observations</th><th>Actions</th></tr></thead><tbody>';
 
-    doctorLabTests.forEach(test => {
+    doctorLabTests.forEach((test, index) => {
         let statusClass = 'success', statusText = 'Normal';
         if (test.actualReading > test.highRange) {
             statusClass = 'danger'; statusText = 'High';
@@ -237,11 +241,103 @@ function loadLabResults() {
             <td>${test.highRange}</td>
             <td><span class="badge bg-${statusClass}">${statusText}</span></td>
             <td>${test.observations}</td>
+            <td>
+                <button class="btn btn-sm btn-info" onclick="viewLabResult(${index})">View Details</button>
+            </td>
         </tr>`;
     });
 
     html += '</tbody></table></div>';
     labResultsDiv.innerHTML = html;
+}
+
+// View lab result details
+function viewLabResult(index) {
+    const labTests = JSON.parse(localStorage.getItem('labTests') || '[]');
+    const doctorName = currentUser.name;
+    const doctorLabTests = labTests.filter(test => test.doctorName === doctorName);
+    const test = doctorLabTests[index];
+    
+    if (!test) return;
+    
+    const actualReading = parseFloat(test.actualReading);
+    const highRange = parseFloat(test.highRange);
+    const lowRange = parseFloat(test.lowRange);
+    
+    let statusClass = 'success';
+    let statusText = 'Normal';
+    
+    if (actualReading > highRange) {
+        statusClass = 'danger';
+        statusText = 'High';
+    } else if (actualReading < lowRange) {
+        statusClass = 'warning';
+        statusText = 'Low';
+    }
+    
+    const reportHtml = `
+        <div class="card">
+            <div class="card-header">
+                <h6>Lab Test Report Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Patient ID:</strong> ${test.patientId}</p>
+                        <p><strong>Patient Name:</strong> ${test.patientName}</p>
+                        <p><strong>Test Date:</strong> ${test.testDate}</p>
+                        <p><strong>Test Name:</strong> ${test.testName}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>High Range:</strong> ${test.highRange}</p>
+                        <p><strong>Low Range:</strong> ${test.lowRange}</p>
+                        <p><strong>Actual Reading:</strong> ${test.actualReading}</p>
+                        <p><strong>Status:</strong> <span class="badge bg-${statusClass}">${statusText}</span></p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p><strong>Observations:</strong></p>
+                    <p>${test.observations}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Create a modal to show the report
+    const modalHtml = `
+        <div class="modal fade" id="viewLabResultModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Lab Test Report Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${reportHtml}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('viewLabResultModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body and show it
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('viewLabResultModal'));
+    modal.show();
+    
+    // Remove modal from DOM after it's hidden
+    document.getElementById('viewLabResultModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
 }
 
 // Initialize doctor dashboard

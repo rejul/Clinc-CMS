@@ -51,6 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
             changePassword();
         });
     }
+    
+    // Auto-fill patient name when patient ID is entered in search
+    if (document.getElementById('searchPatientId')) {
+        document.getElementById('searchPatientId').addEventListener('blur', function() {
+            const patientId = this.value.trim();
+            if (patientId) {
+                const patients = getPatients();
+                const patient = patients.find(p => p.id === patientId);
+                if (patient) {
+                    document.getElementById('searchPatientName').value = patient.name;
+                } else {
+                    document.getElementById('searchPatientName').value = '';
+                    alert('Patient not found!');
+                }
+            }
+        });
+    }
 });
 
 // Load and display medicine list

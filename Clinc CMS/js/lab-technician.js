@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Auto-fill patient name when patient ID is entered
+    // Auto-fill patient name and doctor name when patient ID is entered
     if (document.getElementById('reportPatientId')) {
         document.getElementById('reportPatientId').addEventListener('blur', function() {
             const patientId = this.value.trim();
@@ -59,8 +59,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 const patient = patients.find(p => p.id === patientId);
                 if (patient) {
                     document.getElementById('reportPatientName').value = patient.name;
+                    
+                    // Auto-fill doctor name from recent consultation
+                    const consultations = getConsultations();
+                    const recentConsultation = consultations
+                        .filter(cons => cons.patientId === patientId)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                    
+                    if (recentConsultation) {
+                        document.getElementById('reportDoctorName').value = recentConsultation.doctorName;
+                    }
                 } else {
                     document.getElementById('reportPatientName').value = '';
+                    document.getElementById('reportDoctorName').value = '';
                     alert('Patient not found!');
                 }
             }
