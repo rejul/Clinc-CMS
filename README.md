@@ -70,7 +70,7 @@ Clinc-CMS/
 │   ├── receptionist.html        # Receptionist dashboard
 │   ├── pharmacist.html          # Pharmacist dashboard
 │   └── labtech.html             # Lab technician dashboard
-├── 📁 js/                       # JavaScript modules
+|   📁 js/                       # JavaScript modules
 │   ├── unified-auth.js         # Authentication system
 │   ├── staff.js                # Staff management
 │   ├── doctor.js               # Doctor functionality
@@ -176,7 +176,7 @@ The system uses browser localStorage for data persistence:
 
 ## 📚 API Documentation
 
-### **Authentication API**
+### **Functions**
 ```javascript
 // Login function
 loginUser(email, password)
@@ -191,7 +191,7 @@ isUserLoggedIn()
 getCurrentUser()
 ```
 
-### **Staff Management API**
+### **Staff Management **
 ```javascript
 // Add staff member
 addStaff(staffData)
@@ -206,7 +206,7 @@ updateStaff(staffId, updatedData)
 deleteStaff(staffId)
 ```
 
-### **Patient Management API**
+### **Patient Management **
 ```javascript
 // Add patient
 addPatient(patientData)
@@ -256,7 +256,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For support and questions:
-- **Email**: [Your Email]
+- **Email**: hclsrip@gmail.com
 - **Issues**: Create an issue in the repository
 - **Documentation**: Refer to this README
 
