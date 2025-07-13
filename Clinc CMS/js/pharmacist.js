@@ -43,6 +43,14 @@ document.addEventListener('DOMContentLoaded', function() {
             addMedicine();
         });
     }
+    
+    // Handle password change form submission
+    if (document.getElementById('passwordChangeForm')) {
+        document.getElementById('passwordChangeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            changePassword();
+        });
+    }
 });
 
 // Load and display medicine list
@@ -229,4 +237,70 @@ function displayPrescriptionResults(consultations) {
     });
     
     resultsDiv.innerHTML = html;
+}
+
+// Change password functionality
+function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showPasswordModal('Please fill in all password fields.', 'danger');
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showPasswordModal('New password and confirm password do not match.', 'danger');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showPasswordModal('New password must be at least 6 characters long.', 'danger');
+        return;
+    }
+    
+    // Get staff data
+    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
+    const userIndex = staffList.findIndex(staff =>
+        staff.email === currentUser.email
+    );
+    
+    if (userIndex === -1) {
+        showPasswordModal('Staff member not found.', 'danger');
+        return;
+    }
+    
+    // Check current password
+    if (currentPassword !== staffList[userIndex].password) {
+        showPasswordModal('Current password is incorrect.', 'danger');
+        return;
+    }
+    
+    // Update password
+    staffList[userIndex].password = newPassword;
+    staffList[userIndex].mustChangePassword = false;
+    localStorage.setItem('staffList', JSON.stringify(staffList));
+    
+    // Update current user session
+    const sessionUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    sessionUser.password = newPassword;
+    sessionUser.mustChangePassword = false;
+    localStorage.setItem('currentUser', JSON.stringify(sessionUser));
+    
+    // Show success message
+    showPasswordModal('Password changed successfully!', 'success');
+    
+    // Reset form
+    document.getElementById('passwordChangeForm').reset();
+}
+
+// Show password change modal
+function showPasswordModal(message, type) {
+    const modalBody = document.getElementById('passwordChangeModalBody');
+    modalBody.innerHTML = `<div class="alert alert-${type} mb-0">${message}</div>`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
+    modal.show();
 } 

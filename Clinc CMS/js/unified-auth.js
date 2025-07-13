@@ -1,3 +1,21 @@
+// Show password message function (available to all modules)
+function showPasswordMessage(message, type) {
+    // Check if we're on a page with the password change modal
+    const modal = document.getElementById('passwordChangeModal');
+    if (modal) {
+        // Show modal popup
+        const modalBody = document.getElementById('passwordChangeModalBody');
+        if (modalBody) {
+            modalBody.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+        }
+    } else {
+        // Fallback to alert if modal doesn't exist
+        alert(message);
+    }
+}
+
 // Create default admin account if not exists
 function createDefaultAdmin() {
     const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');

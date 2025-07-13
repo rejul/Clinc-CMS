@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (user && user.mustChangePassword) {
         const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
         tab.show();
-        showPasswordMessage('You must change your password before using the system.', 'warning');
+        showPasswordMessage('You must change your password ', 'warning');
     }
 });
 
@@ -384,10 +384,4 @@ function handlePasswordChange() {
     }, 1500);
 }
 
-function showPasswordMessage(message, type) {
-    // Show modal popup instead of inline alert
-    const modalBody = document.getElementById('passwordChangeModalBody');
-    modalBody.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-    const modal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
-    modal.show();
-} 
+ 
