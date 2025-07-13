@@ -27,8 +27,8 @@ function createDefaultAdmin() {
             dob: '1990-01-01',
             gender: 'Other',
             phone: '1234567890',
-            address: 'Hospital Admin',
-            email: 'admin@hospital.com',
+            address: 'Clinc Admin',
+            email: 'admin@clinc.com',
             role: 'admin',
             specialization: '',
             fee: '',
@@ -77,19 +77,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Redirect based on role
                 switch (staff.role) {
                     case 'admin':
-                        window.location.href = 'admin.html';
+                        window.location.href = 'Portal/admin.html';
                         break;
                     case 'receptionist':
-                        window.location.href = 'receptionist.html';
+                        window.location.href = 'Portal/receptionist.html';
                         break;
                     case 'doctor':
-                        window.location.href = 'doctor.html';
+                        window.location.href = 'Portal/doctor.html';
                         break;
                     case 'pharmacist':
-                        window.location.href = 'pharmacist.html';
+                        window.location.href = 'Portal/pharmacist.html';
                         break;
                     case 'lab technician':
-                        window.location.href = 'lab-technician.html';
+                        window.location.href = 'Portal/labtech.html';
                         break;
                     default:
                         alert('Role not supported yet. Please contact administrator.');
@@ -121,7 +121,7 @@ function checkUserAuth() {
     
     if (!userLoggedIn || !currentUser) {
         console.log('Authentication failed, redirecting to login');
-        window.location.href = 'unified-login.html';
+        window.location.href = 'Portal/login.html';
         return false;
     }
     
@@ -142,7 +142,7 @@ function checkUserRole(requiredRole) {
     if (currentUser.role !== requiredRole) {
         console.log('Role mismatch. Required:', requiredRole, 'Current:', currentUser.role);
         alert('Access denied. You do not have permission to access this module.');
-        window.location.href = 'unified-login.html';
+        window.location.href = 'Portal/login.html';
         return false;
     }
     
@@ -154,5 +154,5 @@ function checkUserRole(requiredRole) {
 function logout() {
     localStorage.removeItem('userLoggedIn');
     localStorage.removeItem('currentUser');
-    window.location.href = 'unified-login.html';
+    window.location.href = 'Portal/login.html';
 } 
