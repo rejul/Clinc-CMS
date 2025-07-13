@@ -1,81 +1,87 @@
 // Check pharmacist role first - before any other code executes
-const currentUser = checkUserRole('pharmacist');
+const currentUser = checkUserRole("pharmacist");
 if (!currentUser) {
-    // If authentication fails, the page will redirect to login
-    // No need to continue loading the rest of the script
-    throw new Error('Authentication failed');
+  // If authentication fails, the page will redirect to login
+  // No need to continue loading the rest of the script
+  throw new Error("Authentication failed");
 }
 
 // Utility functions
 function getMedicines() {
-    return JSON.parse(localStorage.getItem('medicines') || '[]');
+  return JSON.parse(localStorage.getItem("medicines") || "[]");
 }
 
 function saveMedicines(medicines) {
-    localStorage.setItem('medicines', JSON.stringify(medicines));
+  localStorage.setItem("medicines", JSON.stringify(medicines));
 }
 
 function getConsultations() {
-    return JSON.parse(localStorage.getItem('consultations') || '[]');
+  return JSON.parse(localStorage.getItem("consultations") || "[]");
 }
 
 function getPatients() {
-    return JSON.parse(localStorage.getItem('patients') || '[]');
+  return JSON.parse(localStorage.getItem("patients") || "[]");
 }
 
 // Initialize pharmacist dashboard
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Pharmacist module loaded');
-    
-    // Display pharmacist name
-    const pharmacistName = document.getElementById('pharmacistName');
-    if (pharmacistName && currentUser) {
-        pharmacistName.textContent = currentUser.name;
-    }
-    
-    // Load medicine list
-    loadMedicineList();
-    
-    // Handle medicine form submission
-    if (document.getElementById('medicineForm')) {
-        document.getElementById('medicineForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            addMedicine();
-        });
-    }
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Pharmacist module loaded");
+
+  // Display pharmacist name
+  const pharmacistName = document.getElementById("pharmacistName");
+  if (pharmacistName && currentUser) {
+    pharmacistName.textContent = currentUser.name;
+  }
+
+  // Load medicine list
+  loadMedicineList();
+
+  // Handle medicine form submission
+  if (document.getElementById("medicineForm")) {
+    document
+      .getElementById("medicineForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        addMedicine();
+      });
+  }
 });
 
 // Load and display medicine list
 function loadMedicineList() {
-    const medicines = getMedicines();
-    const medicineListDiv = document.getElementById('medicineList');
-    
-    if (medicines.length === 0) {
-        medicineListDiv.innerHTML = '<div class="alert alert-info">No medicines found. Add some medicines to get started.</div>';
-        return;
+  const medicines = getMedicines();
+  const medicineListDiv = document.getElementById("medicineList");
+
+  if (medicines.length === 0) {
+    medicineListDiv.innerHTML =
+      '<div class="alert alert-info">No medicines found. Add some medicines to get started.</div>';
+    return;
+  }
+
+  let html =
+    '<div class="table-responsive"><table class="table table-striped">';
+  html +=
+    "<thead><tr><th>Medicine Name</th><th>Quantity</th><th>Expiry Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>";
+
+  medicines.forEach((medicine, index) => {
+    const today = new Date();
+    const expiryDate = new Date(medicine.expiryDate);
+    const isExpired = expiryDate < today;
+    const isExpiringSoon =
+      expiryDate.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
+
+    let statusClass = "success";
+    let statusText = "Available";
+
+    if (isExpired) {
+      statusClass = "danger";
+      statusText = "Expired";
+    } else if (isExpiringSoon) {
+      statusClass = "warning";
+      statusText = "Expiring Soon";
     }
-    
-    let html = '<div class="table-responsive"><table class="table table-striped">';
-    html += '<thead><tr><th>Medicine Name</th><th>Quantity</th><th>Expiry Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
-    
-    medicines.forEach((medicine, index) => {
-        const today = new Date();
-        const expiryDate = new Date(medicine.expiryDate);
-        const isExpired = expiryDate < today;
-        const isExpiringSoon = expiryDate.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
-        
-        let statusClass = 'success';
-        let statusText = 'Available';
-        
-        if (isExpired) {
-            statusClass = 'danger';
-            statusText = 'Expired';
-        } else if (isExpiringSoon) {
-            statusClass = 'warning';
-            statusText = 'Expiring Soon';
-        }
-        
-        html += `<tr>
+
+    html += `<tr>
             <td>${medicine.name}</td>
             <td>${medicine.quantity}</td>
             <td>${medicine.expiryDate}</td>
@@ -85,122 +91,195 @@ function loadMedicineList() {
                 <button class="btn btn-sm btn-danger" onclick="deleteMedicine(${index})">Delete</button>
             </td>
         </tr>`;
-    });
-    
-    html += '</tbody></table></div>';
-    medicineListDiv.innerHTML = html;
+  });
+
+  html += "</tbody></table></div>";
+  medicineListDiv.innerHTML = html;
 }
 
 // Add new medicine
 function addMedicine() {
-    const medicines = getMedicines();
-    const medicine = {
-        id: Date.now().toString(),
-        name: document.getElementById('medicineName').value,
-        quantity: parseInt(document.getElementById('medicineQuantity').value),
-        expiryDate: document.getElementById('medicineExpiry').value,
-        createdAt: new Date().toISOString()
-    };
-    
-    medicines.push(medicine);
-    saveMedicines(medicines);
-    
-    alert('Medicine added successfully!');
-    document.getElementById('medicineForm').reset();
-    loadMedicineList();
+  const medicines = getMedicines();
+  const medicine = {
+    id: Date.now().toString(),
+    name: document.getElementById("medicineName").value,
+    quantity: parseInt(document.getElementById("medicineQuantity").value),
+    expiryDate: document.getElementById("medicineExpiry").value,
+    createdAt: new Date().toISOString(),
+  };
+
+  medicines.push(medicine);
+  saveMedicines(medicines);
+
+  alert("Medicine added successfully!");
+  document.getElementById("medicineForm").reset();
+  loadMedicineList();
 }
 
 // Edit medicine
 function editMedicine(index) {
-    const medicines = getMedicines();
-    const medicine = medicines[index];
-    
-    document.getElementById('editMedicineName').value = medicine.name;
-    document.getElementById('editMedicineQuantity').value = medicine.quantity;
-    document.getElementById('editMedicineExpiry').value = medicine.expiryDate;
-    
-    // Store the index for update
-    document.getElementById('medicineModal').setAttribute('data-edit-index', index);
-    
-    const modal = new bootstrap.Modal(document.getElementById('medicineModal'));
-    modal.show();
+  const medicines = getMedicines();
+  const medicine = medicines[index];
+
+  document.getElementById("editMedicineName").value = medicine.name;
+  document.getElementById("editMedicineQuantity").value = medicine.quantity;
+  document.getElementById("editMedicineExpiry").value = medicine.expiryDate;
+
+  // Store the index for update
+  document
+    .getElementById("medicineModal")
+    .setAttribute("data-edit-index", index);
+
+  const modal = new bootstrap.Modal(document.getElementById("medicineModal"));
+  modal.show();
 }
 
 // Update medicine
 function updateMedicine() {
-    const medicines = getMedicines();
-    const editIndex = document.getElementById('medicineModal').getAttribute('data-edit-index');
-    
-    if (editIndex !== null) {
-        const index = parseInt(editIndex);
-        medicines[index].name = document.getElementById('editMedicineName').value;
-        medicines[index].quantity = parseInt(document.getElementById('editMedicineQuantity').value);
-        medicines[index].expiryDate = document.getElementById('editMedicineExpiry').value;
-        
-        saveMedicines(medicines);
-        loadMedicineList();
-        
-        const modal = bootstrap.Modal.getInstance(document.getElementById('medicineModal'));
-        modal.hide();
-        
-        alert('Medicine updated successfully!');
-    }
+  const medicines = getMedicines();
+  const editIndex = document
+    .getElementById("medicineModal")
+    .getAttribute("data-edit-index");
+
+  if (editIndex !== null) {
+    const index = parseInt(editIndex);
+    medicines[index].name = document.getElementById("editMedicineName").value;
+    medicines[index].quantity = parseInt(
+      document.getElementById("editMedicineQuantity").value
+    );
+    medicines[index].expiryDate =
+      document.getElementById("editMedicineExpiry").value;
+
+    saveMedicines(medicines);
+    loadMedicineList();
+
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("medicineModal")
+    );
+    modal.hide();
+
+    alert("Medicine updated successfully!");
+  }
 }
 
 // Delete medicine
 function deleteMedicine(index) {
-    if (!confirm('Are you sure you want to delete this medicine?')) return;
-    
-    const medicines = getMedicines();
-    medicines.splice(index, 1);
-    saveMedicines(medicines);
-    loadMedicineList();
-    
-    alert('Medicine deleted successfully!');
+  if (!confirm("Are you sure you want to delete this medicine?")) return;
+
+  const medicines = getMedicines();
+  medicines.splice(index, 1);
+  saveMedicines(medicines);
+  loadMedicineList();
+
+  alert("Medicine deleted successfully!");
 }
 
 // Search prescriptions
 function searchPrescriptions() {
-    const patientId = document.getElementById('searchPatientId').value.trim();
-    const patientName = document.getElementById('searchPatientName').value.trim();
-    
-    const consultations = getConsultations();
-    const patients = getPatients();
-    let results = [];
-    
-    if (patientId) {
-        results = consultations.filter(cons => cons.patientId === patientId);
-    } else if (patientName) {
-        results = consultations.filter(cons => 
-            cons.patientName.toLowerCase().includes(patientName.toLowerCase())
-        );
-    }
-    
-    displayPrescriptionResults(results);
+  const patientId = document.getElementById("searchPatientId").value.trim();
+  const patientName = document.getElementById("searchPatientName").value.trim();
+
+  const consultations = getConsultations();
+  const patients = getPatients();
+  let results = [];
+
+  if (patientId) {
+    results = consultations.filter((cons) => cons.patientId === patientId);
+  } else if (patientName) {
+    results = consultations.filter((cons) =>
+      cons.patientName.toLowerCase().includes(patientName.toLowerCase())
+    );
+  }
+
+  displayPrescriptionResults(results);
 }
 
 // Clear prescription search
 function clearPrescriptionSearch() {
-    document.getElementById('searchPatientId').value = '';
-    document.getElementById('searchPatientName').value = '';
-    document.getElementById('prescriptionResults').innerHTML = '';
+  document.getElementById("searchPatientId").value = "";
+  document.getElementById("searchPatientName").value = "";
+  document.getElementById("prescriptionResults").innerHTML = "";
+}
+
+// Show change password modal
+function showChangePasswordModal() {
+  const modal = new bootstrap.Modal(
+    document.getElementById("changePasswordModal")
+  );
+  modal.show();
+}
+
+// Change password function
+function changePassword() {
+  const currentPassword = document.getElementById("currentPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  // Validate current password
+  if (currentPassword !== currentUser.password) {
+    alert("Current password is incorrect");
+    return;
+  }
+
+  // Validate new password match
+  if (newPassword !== confirmPassword) {
+    alert("New passwords do not match");
+    return;
+  }
+
+  // Validate password strength
+  if (newPassword.length < 8) {
+    alert("New password must be at least 8 characters long");
+    return;
+  }
+
+  // Update password in localStorage
+  const staffList = JSON.parse(localStorage.getItem("staffList") || "[]");
+  const staffIndex = staffList.findIndex(
+    (staff) => staff.email === currentUser.email
+  );
+
+  if (staffIndex !== -1) {
+    staffList[staffIndex].password = newPassword;
+    localStorage.setItem("staffList", JSON.stringify(staffList));
+
+    // Update current user
+    currentUser.password = newPassword;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    // Close modal and clear form
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("changePasswordModal")
+    );
+    modal.hide();
+    document.getElementById("changePasswordForm").reset();
+
+    alert("Password changed successfully!");
+  } else {
+    alert("Error updating password. Please try again.");
+  }
 }
 
 // Display prescription search results
 function displayPrescriptionResults(consultations) {
-    const resultsDiv = document.getElementById('prescriptionResults');
-    
-    if (consultations.length === 0) {
-        resultsDiv.innerHTML = '<div class="alert alert-info">No prescriptions found.</div>';
-        return;
-    }
-    
-    let html = '';
-    consultations.forEach(consultation => {
-        html += `<div class="card mb-3">
+  const resultsDiv = document.getElementById("prescriptionResults");
+
+  if (consultations.length === 0) {
+    resultsDiv.innerHTML =
+      '<div class="alert alert-info">No prescriptions found.</div>';
+    return;
+  }
+
+  let html = "";
+  consultations.forEach((consultation) => {
+    html += `<div class="card mb-3">
             <div class="card-header">
-                <h6 class="mb-0">Patient: ${consultation.patientName} (ID: ${consultation.patientId})</h6>
-                <small class="text-muted">Consultation Date: ${consultation.date} | Doctor: ${consultation.doctorName}</small>
+                <h6 class="mb-0">Patient: ${consultation.patientName} (ID: ${
+      consultation.patientId
+    })</h6>
+                <small class="text-muted">Consultation Date: ${
+                  consultation.date
+                } | Doctor: ${consultation.doctorName}</small>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -220,13 +299,17 @@ function displayPrescriptionResults(consultations) {
                     </div>
                     <div class="col-md-6">
                         <strong>Lab Tests:</strong><br>
-                        <p>${consultation.labTests || 'None'}</p>
+                        <p>${consultation.labTests || "None"}</p>
                     </div>
                 </div>
-                ${consultation.notes ? `<div class="mt-3"><strong>Notes:</strong><br><p>${consultation.notes}</p></div>` : ''}
+                ${
+                  consultation.notes
+                    ? `<div class="mt-3"><strong>Notes:</strong><br><p>${consultation.notes}</p></div>`
+                    : ""
+                }
             </div>
         </div>`;
-    });
-    
-    resultsDiv.innerHTML = html;
-} 
+  });
+
+  resultsDiv.innerHTML = html;
+}
