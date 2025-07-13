@@ -174,21 +174,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Patient search functionality
 function searchPatients() {
-    const searchById = document.getElementById('searchById').value.trim();
-    const searchByName = document.getElementById('searchByName').value.trim();
+    const searchById = document.getElementById('searchById').value.trim().toLowerCase();
+    const searchByName = document.getElementById('searchByName').value.trim().toLowerCase();
     const searchByPhone = document.getElementById('searchByPhone').value.trim();
-    
+
     const patients = getPatients();
-    let results = [];
-    
-    if (searchById) {
-        results = patients.filter(patient => patient.id.toLowerCase().includes(searchById.toLowerCase()));
-    } else if (searchByName) {
-        results = patients.filter(patient => patient.name.toLowerCase().includes(searchByName.toLowerCase()));
-    } else if (searchByPhone) {
-        results = patients.filter(patient => patient.phone.includes(searchByPhone));
-    }
-    
+    let results = patients.filter(patient => {
+        return (!searchById || patient.id.toLowerCase().includes(searchById)) &&
+               (!searchByName || patient.name.toLowerCase().includes(searchByName)) &&
+               (!searchByPhone || patient.phone.includes(searchByPhone));
+    });
+
     displaySearchResults(results);
 }
 
