@@ -171,6 +171,62 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('staffForm').reset();
         handleRoleChange();
     });
+
+    // Admin password change logic
+    const passwordForm = document.getElementById('passwordChangeForm');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('passwordMessage');
+            messageDiv.classList.add('d-none');
+
+            // Get current admin from localStorage
+            let staffList = getStaffList();
+            let admin = staffList.find(s => s.role === 'admin');
+            if (!admin) {
+                messageDiv.textContent = 'Admin account not found.';
+                messageDiv.className = 'alert alert-danger mt-3';
+                messageDiv.classList.remove('d-none');
+                return;
+            }
+            if (currentPassword !== admin.password) {
+                messageDiv.textContent = 'Current password is incorrect.';
+                messageDiv.className = 'alert alert-danger mt-3';
+                messageDiv.classList.remove('d-none');
+                return;
+            }
+            if (newPassword.length < 6) {
+                messageDiv.textContent = 'New password must be at least 6 characters.';
+                messageDiv.className = 'alert alert-warning mt-3';
+                messageDiv.classList.remove('d-none');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                messageDiv.textContent = 'New password and confirmation do not match.';
+                messageDiv.className = 'alert alert-warning mt-3';
+                messageDiv.classList.remove('d-none');
+                return;
+            }
+            // Update password
+            admin.password = newPassword;
+            // Also update in localStorage
+            staffList = staffList.map(s => s.role === 'admin' ? admin : s);
+            saveStaffList(staffList);
+            // Update currentUser if logged in as admin
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser && currentUser.role === 'admin') {
+                currentUser.password = newPassword;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            messageDiv.textContent = 'Password changed successfully!';
+            messageDiv.className = 'alert alert-success mt-3';
+            messageDiv.classList.remove('d-none');
+            passwordForm.reset();
+        });
+    }
 });
 
 // Edit staff

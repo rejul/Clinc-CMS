@@ -340,6 +340,8 @@ function viewLabResult(index) {
     });
 }
 
+console.log("DOMContentLoaded doctor.js");
+
 // Initialize doctor dashboard
 document.addEventListener('DOMContentLoaded', function() {
     // Load today's appointments
@@ -387,6 +389,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const tab = new bootstrap.Tab(document.querySelector('#profile-tab'));
         tab.show();
         showPasswordMessage('You must change your password before using the system.', 'warning');
+        // Disable all tabs except Change Password
+        document.querySelectorAll('#doctorTabs .nav-link').forEach(tab => {
+            if (tab.id !== 'profile-tab') {
+                tab.classList.add('disabled');
+                tab.setAttribute('tabindex', '-1');
+                tab.setAttribute('aria-disabled', 'true');
+            }
+        });
+        // Disable all forms except password change form
+        document.querySelectorAll('form').forEach(form => {
+            if (form.id !== 'passwordChangeForm') {
+                Array.from(form.elements).forEach(el => el.disabled = true);
+            }
+        });
     }
 
     if (document.getElementById('labresults-tab')) {
@@ -451,6 +467,16 @@ function handlePasswordChange() {
     showPasswordMessage('Password changed successfully!', 'success');
     document.getElementById('passwordChangeForm').reset();
 
+    // Re-enable all tabs and forms after password change
+    document.querySelectorAll('#doctorTabs .nav-link').forEach(tab => {
+        tab.classList.remove('disabled');
+        tab.removeAttribute('tabindex');
+        tab.removeAttribute('aria-disabled');
+    });
+    document.querySelectorAll('form').forEach(form => {
+        Array.from(form.elements).forEach(el => el.disabled = false);
+    });
+
     // Optionally reload after a short delay
     setTimeout(() => {
         location.reload();
@@ -458,8 +484,57 @@ function handlePasswordChange() {
 }
 
 function showPasswordMessage(message, type) {
+    const existingModal = document.getElementById('passwordMessageModal');
+    if (existingModal) {
+        // Remove focus from any element inside the modal
+        if (existingModal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+        // If modal is visible, hide it first, then remove and show new one
+        const modalInstance = bootstrap.Modal.getInstance(existingModal);
+        if (modalInstance) {
+            existingModal.addEventListener('hidden.bs.modal', function handler() {
+                existingModal.removeEventListener('hidden.bs.modal', handler);
+                existingModal.remove();
+                createAndShowPasswordModal(message, type);
+            });
+            modalInstance.hide();
+            return;
+        } else {
+            existingModal.remove();
+        }
+    }
+    createAndShowPasswordModal(message, type);
+}
+
+function createAndShowPasswordModal(message, type) {
+    const modalHtml = `
+        <div class="modal" id="passwordMessageModal" tabindex="-1" aria-labelledby="passwordMessageModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'danger'} text-white">
+                        <h5 class="modal-title" id="passwordMessageModalLabel">Password Change</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-${type}">${message}</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('passwordMessageModal'));
+    modal.show();
+    document.getElementById('passwordMessageModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+    // Hide the inline alert if visible
     const messageDiv = document.getElementById('passwordMessage');
-    messageDiv.textContent = message;
-    messageDiv.className = `alert alert-${type} mt-3`;
-    messageDiv.classList.remove('d-none');
+    if (messageDiv) {
+        messageDiv.classList.add('d-none');
+    }
 } 
