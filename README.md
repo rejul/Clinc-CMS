@@ -70,7 +70,7 @@ Clinc-CMS/
 │   ├── receptionist.html        # Receptionist dashboard
 │   ├── pharmacist.html          # Pharmacist dashboard
 │   ├── labtech.html             # Lab technician dashboard
-|   ├── 📁 js/                       # JavaScript modules
+|   └── 📁 js/                       # JavaScript modules
 │      ├── unified-auth.js         # Authentication system
 │      ├── staff.js                # Staff management
 │      ├── doctor.js               # Doctor functionality
