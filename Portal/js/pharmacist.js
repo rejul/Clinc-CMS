@@ -23,6 +23,50 @@ function getPatients() {
     return JSON.parse(localStorage.getItem('patients') || '[]');
 }
 
+// Initialize demo medicines if none exist
+function initializeDemoMedicines() {
+    if (getMedicines().length === 0) {
+        const demoMedicines = [
+            {
+                id: '1',
+                name: 'Paracetamol',
+                quantity: 100,
+                expiryDate: '2025-12-31',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '2',
+                name: 'Amoxicillin',
+                quantity: 50,
+                expiryDate: '2024-11-15',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '3',
+                name: 'Ibuprofen',
+                quantity: 75,
+                expiryDate: '2026-01-20',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '4',
+                name: 'Cetirizine',
+                quantity: 40,
+                expiryDate: '2025-05-10',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '5',
+                name: 'Metformin',
+                quantity: 60,
+                expiryDate: '2025-08-30',
+                createdAt: new Date().toISOString()
+            }
+        ];
+        saveMedicines(demoMedicines);
+    }
+}
+
 // Initialize pharmacist dashboard
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Pharmacist module loaded');
@@ -32,6 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pharmacistName && currentUser) {
         pharmacistName.textContent = currentUser.name;
     }
+    
+    // Initialize demo medicines if needed
+    initializeDemoMedicines();
     
     // Load medicine list
     loadMedicineList();
@@ -273,8 +320,11 @@ function changePassword() {
         return;
     }
     
-    if (newPassword.length < 6) {
-        showPasswordModal('New password must be at least 6 characters long.', 'danger');
+    if (newPassword.length < 8 ||
+        !/[A-Za-z]/.test(newPassword) ||
+        !/[0-9]/.test(newPassword) ||
+        !/[^A-Za-z0-9]/.test(newPassword)) {
+        showPasswordModal('New password must be at least 8 characters long and contain at least one letter, one number, and one symbol.', 'danger');
         return;
     }
     

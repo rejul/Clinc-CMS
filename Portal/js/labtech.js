@@ -371,8 +371,11 @@ function handlePasswordChange() {
     }
 
     // Check password strength (minimum 8 characters)
-    if (newPassword.length < 8) {
-        showPasswordMessage('New password must be at least 8 characters long.', 'danger');
+    if (newPassword.length < 8 ||
+        !/[A-Za-z]/.test(newPassword) ||
+        !/[0-9]/.test(newPassword) ||
+        !/[^A-Za-z0-9]/.test(newPassword)) {
+        showPasswordMessage('New password must be at least 8 characters long and contain at least one letter, one number, and one symbol.', 'danger');
         return;
     }
 
