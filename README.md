@@ -7,7 +7,7 @@ A comprehensive **Clinic Management System** built with vanilla JavaScript, Boot
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [System Architecture](#--system-architecture)
+- [System Architecture](#-system-architecture)
 - [Installation & Setup](#-installation--setup)
 - [User Roles & Access](#-user-roles--access)
 - [File Structure](#-file-structure)
