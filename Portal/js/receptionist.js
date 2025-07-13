@@ -79,6 +79,43 @@ function loadDoctors() {
 
 // Patient form handling
 document.addEventListener('DOMContentLoaded', function() {
+    // Add dummy patients if none exist
+    let patients = getPatients();
+    if (patients.length === 0) {
+        patients = [
+            {
+                id: generatePatientId(),
+                name: 'Alice Smith',
+                dob: '1995-04-10',
+                gender: 'Female',
+                phone: '8000000001',
+                address: '12 River Rd',
+                email: 'alice.smith@example.com',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: generatePatientId(),
+                name: 'Bob Johnson',
+                dob: '1988-11-22',
+                gender: 'Male',
+                phone: '8000000002',
+                address: '34 Lake Ave',
+                email: 'bob.johnson@example.com',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: generatePatientId(),
+                name: 'Charlie Lee',
+                dob: '2000-07-15',
+                gender: 'Other',
+                phone: '8000000003',
+                address: '56 Hill St',
+                email: 'charlie.lee@example.com',
+                createdAt: new Date().toISOString()
+            }
+        ];
+        savePatients(patients);
+    }
     if (document.getElementById('patientForm')) {
         document.getElementById('patientForm').addEventListener('submit', function(e) {
             e.preventDefault();

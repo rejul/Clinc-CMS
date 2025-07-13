@@ -19,7 +19,9 @@ function showPasswordMessage(message, type) {
 // Create default admin account if not exists
 function createDefaultAdmin() {
     const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
-    const adminExists = staffList.find(s => s.role === 'admin');
+    const adminExists = staffList.find(
+        s => s.role === 'admin' && s.email === 'admin@clinc.com'
+    );
     
     if (!adminExists) {
         const defaultAdmin = {
