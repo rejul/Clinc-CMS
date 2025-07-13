@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add dummy staff if staffList is empty
     let staffList = getStaffList();
     if (staffList.length === 1) {
-        staffList = [
+        staffList += [
             {
                 name: 'Dr. John Doe',
                 dob: '1980-05-15',
