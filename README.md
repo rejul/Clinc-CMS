@@ -16,7 +16,7 @@ A comprehensive **Clinic Management System** built with vanilla JavaScript, Boot
 - [Contributing](#contributing)
 - [License](#license)
 
-## ✨ Features
+##✨ Features
 
 ### 🔐 **Unified Authentication System**
 - Single login portal for all staff members
