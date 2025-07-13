@@ -69,14 +69,14 @@ Clinc-CMS/
 │   ├── doctor.html              # Doctor dashboard
 │   ├── receptionist.html        # Receptionist dashboard
 │   ├── pharmacist.html          # Pharmacist dashboard
-│   └── labtech.html             # Lab technician dashboard
-|   📁 js/                       # JavaScript modules
-│   ├── unified-auth.js         # Authentication system
-│   ├── staff.js                # Staff management
-│   ├── doctor.js               # Doctor functionality
-│   ├── receptionist.js         # Receptionist functionality
-│   ├── pharmacist.js           # Pharmacist functionality
-│   └── lab-technician.js       # Lab technician functionality
+│   ├── labtech.html             # Lab technician dashboard
+|   ├── 📁 js/                       # JavaScript modules
+│      ├── unified-auth.js         # Authentication system
+│      ├── staff.js                # Staff management
+│      ├── doctor.js               # Doctor functionality
+│      ├── receptionist.js         # Receptionist functionality
+│      ├── pharmacist.js           # Pharmacist functionality
+│      └── lab-technician.js       # Lab technician functionality
 ├── 📄 index.html                # Landing page
 ├── 📄 appoinment.html          # Appointment management
 └── 📄 README.md                # Documentation
