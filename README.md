@@ -1,4 +1,4 @@
-# Hospital CMS (Clinic Management System)
+# Clinc CMS (Clinic Management System)
 
 A simple Hospital CMS built with  JavaScript, Bootstrap CSS, and localStorage for data persistence.
 
