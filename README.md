@@ -1,7 +1,9 @@
 # Hospital CMS (Clinic Management System)
 
 A simple Hospital CMS built with  JavaScript, Bootstrap CSS, and localStorage for data persistence.
+
 Done By Group 3 - Rejul, Anjali, Chithara , Goldlin , Niyathi
+
 ## Features
 
 ### Admin Module
