@@ -23,7 +23,7 @@ function createDefaultAdmin() {
         s => s.role === 'admin' && s.email === 'admin@clinc.com'
     );
     
-    if (!adminExists) {
+    if (!adminExists || adminExists.password !== 'Admin@123') {
         const defaultAdmin = {
             name: 'Administrator',
             dob: '1990-01-01',
