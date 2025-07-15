@@ -318,6 +318,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Edit staff
 function editStaff(idx) {
+    // Switch to Add Staff tab
+    var addStaffTab = document.getElementById('add-staff-tab');
+    if (addStaffTab) {
+        var tab = new bootstrap.Tab(addStaffTab);
+        tab.show();
+    }
     const staffList = getStaffList();
     const staff = staffList[idx];
     document.getElementById('name').value = staff.name;
