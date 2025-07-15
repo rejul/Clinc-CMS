@@ -426,3 +426,11 @@ function resetPassword(idx) {
         }
     }, { once: true });
 } 
+
+// Validates if a phone number starts with 9, 8, 7, or 6 and is 10 digits long
+function isValidPhoneNumber(phone) {
+    return /^[9876]\d{9}$/.test(phone);
+}
+// Example usage:
+// console.log(isValidPhoneNumber('9876543210')); // true
+// console.log(isValidPhoneNumber('5123456789')); // false 

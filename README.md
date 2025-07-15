@@ -1,4 +1,4 @@
-# 🏥 Clinc-CMS (Clinic Management System)
+# 🏥 Clinic-CMS (Clinic Management System)
 
 A comprehensive **Clinic Management System** built with vanilla JavaScript, Bootstrap CSS, and localStorage for data persistence. This system provides role-based access for different healthcare staff members with complete patient management, appointment scheduling, and medical record keeping.
 
@@ -62,7 +62,7 @@ A comprehensive **Clinic Management System** built with vanilla JavaScript, Boot
 ## 🏗️ System Architecture
 
 ```
-Clinc-CMS/
+Clinic-CMS/
 ├── 📁 Portal/                    # Main application portal
 │   ├── login.html               # Unified authentication portal
 │   ├── admin.html               # Admin dashboard
@@ -92,7 +92,7 @@ Clinc-CMS/
 1. **Clone or Download** the project files
 2. **Open** `Portal/login.html` in your web browser
 3. **Login** with admin credentials:
-   - **Email**: `admin@clinc.com`
+   - **Email**: `admin@clinic.com`
    - **Password**: `Admin@123`
 4. **Setup Staff**: Add doctors, receptionists, and other staff members
 5. **Begin Operations**: Start managing patients and appointments
@@ -101,7 +101,7 @@ Clinc-CMS/
 ```bash
 # 1. Download the project
 git clone [repository-url]
-cd Clinc-CMS
+cd Clinic-CMS
 
 # 2. Open in browser
 # Navigate to Portal/login.html
@@ -114,7 +114,7 @@ cd Clinc-CMS
 ## 👥 User Roles & Access
 
 ### 🔑 **Admin Access**
-- **Login**: `admin@clinc.com` / `Admin@123`
+- **Login**: `admin@clinic.com` / `Admin@123`
 - **Responsibilities**: System administration, staff management
 - **Features**: User creation, role assignment, system configuration
 

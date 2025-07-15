@@ -3,23 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinc CMS - Admin Dashboard</title>
+    <title>Clinic CMS - Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Clinc CMS</a>
+            <a class="navbar-brand" href="#">Clinic CMS</a>
             <button class="btn btn-outline-light ms-auto" onclick="logout()">Logout</button>
         </div>
     </nav>
     <div class="container">
         <h2 class="mb-4">User Management</h2>
-        <div class="card mb-4">
-            <div class="card-body">
+        <!-- Tabs navigation -->
+        <ul class="nav nav-tabs mb-3" id="staffTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="add-staff-tab" data-bs-toggle="tab" data-bs-target="#add-staff" type="button" role="tab" aria-controls="add-staff" aria-selected="true">Add Staff</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="staff-list-tab" data-bs-toggle="tab" data-bs-target="#staff-list" type="button" role="tab" aria-controls="staff-list" aria-selected="false">Staff List</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="staffTabContent">
+          <div class="tab-pane fade show active" id="add-staff" role="tabpanel" aria-labelledby="add-staff-tab">
+            <div class="card mb-4">
+              <div class="card-body">
                 <form id="staffForm">
-                    <div class="row g-3">
+                  <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" required >
@@ -123,24 +134,27 @@
                         <button type="reset" class="btn btn-secondary ms-2">Reset</button>
                     </div>
                 </form>
+              </div>
             </div>
+          </div>
+          <div class="tab-pane fade" id="staff-list" role="tabpanel" aria-labelledby="staff-list-tab">
+            <h4>Staff List</h4>
+            <table class="table table-bordered table-striped" id="staffTable">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Staff rows will be populated by JS -->
+                </tbody>
+            </table>
+          </div>
         </div>
-        <h4>Staff List</h4>
-        <table class="table table-bordered table-striped" id="staffTable">
-            <thead class="table-primary">
-                <tr>
-                    <th>Name</th>
-                    <th>Role</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Staff rows will be populated by JS -->
-            </tbody>
-        </table>
-    </div>
     <!-- Credentials Modal -->
     <div class="modal fade" id="credentialsModal" tabindex="-1" aria-labelledby="credentialsModalLabel" aria-hidden="true">
       <div class="modal-dialog">
