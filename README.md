@@ -2,7 +2,12 @@
 
 A comprehensive **Clinic Management System** built with vanilla JavaScript, Bootstrap CSS, and localStorage for data persistence. This system provides role-based access for different healthcare staff members with complete patient management, appointment scheduling, and medical record keeping.
 
-**Developed by Group 3**: Rejul, Anjali, Chithara, Goldlin, Niyathi
+**Developed by Group 3**:
+Rejul - Doctor Panel
+Anjali - Pharmacist Panel
+Chythra - Lab Technician Panel
+Godlin  - Receptionist Panel
+Niyathi - Admin Panel
 
 ## 📋 Table of Contents
 
